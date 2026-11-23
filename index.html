@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jayson Fischer — Creative Developer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================= GRUNDLAGE ================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      overflow-x: hidden; 
+      width: 100%;
+      position: relative;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: #000000; 
+      user-select: none; 
+    }
+
+    ::-webkit-scrollbar { display: none; }
+
+    /* ================= HERO SECTION ================= */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      background-color: #000000;
+      overflow: hidden; /* Verhindert horizontales Scrollen beim Zoomen */
+    }
+
+    /* ================= TEXT & BUTTONS ================= */
+    .top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 3.5vw 5vw;
+    }
+
+    .top-bar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 150%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .brand { display: flex; flex-direction: column; gap: 8px; max-width: 500px; }
+
+    .brand-name {
+      font-size: clamp(2.5rem, 4.5vw, 4rem);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .typewriter-container { 
+      display: inline-flex; 
+      align-items: center;
+      margin: 16px 0;
+      height: 30px; 
+    }
+    
+    .typewriter-text {
+      font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+      font-weight: 500;
+      color: #868691;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background-color: #ffffff;
+      margin-left: 4px;
+      animation: blink 0.8s step-end infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .brand-bio {
+      font-size: clamp(1rem, 1.2vw, 1.1rem);
+      font-weight: 400;
+      color: #d4d4d8;
+      line-height: 1.7;
+      width: 100%; 
+      max-width: 420px; 
+    }
+
+    .nav-buttons { display: flex; gap: 16px; align-items: center; }
+
+    .modern-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 100px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .modern-btn:hover { background: #ffffff; color: #000000; transform: translateY(-2px); }
+    .modern-btn--primary { background: #ffffff; color: #000000; }
+
+    /* ================= DAS HOHE BILD ================= */
+    .image-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      overflow: hidden; 
+    }
+
+    .tall-image {
+      width: 130vw;
+      max-width: 1800px;
+      height: auto;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      margin-top: 40vh; 
+    }
+
+    /* ================= UNTERER TEXT (Papierschnipsel) ================= */
+    .bottom-note {
+      position: absolute;
+      bottom: 22%;
+      left: 5vw;
+      max-width: 550px;
+      text-align: left;
+      z-index: 10;
+      opacity: 0;
+      animation: fadeInBottom 3s ease-out 1s forwards;
+    }
+
+    .bottom-note h2 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .bottom-note p {
+      font-size: clamp(1rem, 1.2vw, 1.2rem);
+      color: #a1a1aa;
+      font-weight: 500;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+    }
+
+    @keyframes fadeInBottom {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =======================================================
+       HINGUCKER: Schwebender Code
+       ======================================================= */
+    .bg-anim-container {
+      position: absolute;
+      left: 0; width: 100%; height: 50vh; bottom: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .float-symbol {
+      position: absolute;
+      bottom: -50px;
+      font-family: 'Inter', monospace;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.034);
+      animation: floatUp linear infinite;
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-120vh); opacity: 0; }
+    }
+
+    /* =======================================================
+       OBJEKTE (Positionen in % relativ zum Bild)
+       ======================================================= */
+    .relative-image-container {
+      position: relative;
+      display: inline-block; 
+      line-height: 0; 
+    }
+
+    .overlay-pc, .overlay-plant, .overlay-cube {
+      position: absolute;
+      z-index: 5; 
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .overlay-pc:hover, .overlay-plant:hover, .overlay-cube:hover {
+      transform: scale(1.02);
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.151));
+    }
+
+    /* Diese Werte gelten jetzt für ALLE Bildschirmgrößen */
+    .overlay-pc {
+      top: 20.4%;   
+      left: 54.4%;  
+      width: 16.5%; 
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    .overlay-plant {
+      top: 20%;   
+      left: 44.4%;  
+      width: 9.2%; 
+      height: auto;
+      z-index: 20;
+      image-rendering: pixelated;
+    }
+
+    .overlay-cube {
+      top: 31.4%;   
+      left: 69.6%;  
+      width: 5.3%; 
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    /* =======================================================
+       MODAL (Für die Objekte)
+       ======================================================= */
+    .info-modal {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 20px;
+    }
+
+    .info-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(22, 22, 28, 0.96), rgba(12, 12, 16, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 920px;
+      color: #ffffff;
+      position: relative;
+      transform: translateY(30px) scale(0.96);
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .info-modal.active .modal-content {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) 140px minmax(0, 1fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .modal-image-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .image-frame {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      min-height: 240px;
+      background: radial-gradient(circle at center, rgba(125, 211, 168, 0.08), transparent 70%);
+      border-radius: 20px;
+    }
+
+    .image-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(125, 211, 168, 0.1), rgba(167, 139, 250, 0.1));
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .info-modal.active .image-frame::before { opacity: 1; }
+
+    .modal-image {
+      width: 100%;
+      height: auto;
+      max-width: 280px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+      opacity: 0;
+      transform: translateY(15px) scale(0.92);
+      transition: opacity 0.6s 0.15s ease, transform 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .info-modal.active .modal-image { opacity: 1; transform: translateY(0) scale(1); }
+
+    .image-label {
+      font-family: 'Inter', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #7DD3A8;
+      opacity: 0;
+      transition: opacity 0.5s 0.5s ease;
+    }
+
+    .info-modal.active .image-label { opacity: 0.85; }
+
+    .modal-connector { position: relative; height: 60px; width: 100%; display: flex; align-items: center; }
+
+    .connector-track {
+      position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; border-radius: 2px;
+      background: linear-gradient(90deg, rgba(125, 211, 168, 0.9) 0%, rgba(167, 139, 250, 0.9) 50%, rgba(244, 114, 182, 0.9) 100%);
+      box-shadow: 0 0 8px rgba(125, 211, 168, 0.6), 0 0 16px rgba(167, 139, 250, 0.4);
+      opacity: 0; transform: scaleX(0); transform-origin: left center;
+      transition: opacity 0.4s 0.3s ease, transform 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .info-modal.active .connector-track { opacity: 1; transform: scaleX(1); }
+
+    .connector-pulse {
+      position: absolute; top: 50%; left: 0; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
+      background: #ffffff; box-shadow: 0 0 10px 3px rgba(167, 139, 250, 0.9), 0 0 24px 8px rgba(167, 139, 250, 0.4);
+      opacity: 0; pointer-events: none;
+    }
+
+    .info-modal.active .connector-pulse { animation: travelPulse 2s ease-in-out 1s infinite; }
+
+    @keyframes travelPulse {
+      0% { left: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: calc(100% - 10px); opacity: 0; }
+    }
+
+    .connector-dot {
+      position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
+      opacity: 0; transform: scale(0); transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .connector-dot--start { left: 0; background: #7DD3A8; box-shadow: 0 0 10px rgba(125, 211, 168, 0.8); }
+    .connector-dot--end { right: 0; background: #A78BFA; box-shadow: 0 0 10px rgba(167, 139, 250, 0.8); }
+
+    .info-modal.active .connector-dot--start { opacity: 1; transform: scale(1); transition-delay: 0.35s; }
+    .info-modal.active .connector-dot--end { opacity: 1; transform: scale(1); transition-delay: 0.85s; }
+
+    .modal-text-side { opacity: 0; transform: translateX(15px); transition: opacity 0.6s 0.55s ease, transform 0.6s 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+    .info-modal.active .modal-text-side { opacity: 1; transform: translateX(0); }
+
+    .text-label {
+      display: inline-block; font-family: 'Inter', monospace; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; color: #A78BFA; padding: 5px 11px;
+      background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.2);
+      border-radius: 6px; margin-bottom: 18px;
+    }
+
+    .modal-text-side h3 { font-size: 1.75rem; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.02em; line-height: 1.2; color: #ffffff; }
+    .modal-text-side p { font-size: 1rem; color: #a1a1aa; line-height: 1.7; }
+
+    .modal-close {
+      position: absolute; top: 22px; right: 22px; width: 36px; height: 36px;
+      display: grid; place-items: center; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; color: #a1a1aa;
+      font-size: 1.3rem; line-height: 1; cursor: pointer; transition: all 0.25s ease; z-index: 10;
+    }
+
+    .modal-close:hover { background: rgba(255, 255, 255, 0.12); color: #ffffff; transform: rotate(90deg); }
+
+    /* =======================================================
+       FLOATING HINTS
+       ======================================================= */
+    .floating-hint {
+      position: absolute; top: 15%; right: 6%; z-index: 8; display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 20px; background: rgba(167, 139, 250, 0.05); border: 1px solid rgba(167, 139, 250, 0.18);
+      border-radius: 14px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0; transform: translateY(-10px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none; max-width: 280px;
+    }
+
+    .floating-hint.visible { opacity: 1; transform: translateY(0); }
+
+    .hint-arrow { flex-shrink: 0; color: #A78BFA; margin-top: 2px; animation: arrowBob 1.6s ease-in-out infinite; }
+    @keyframes arrowBob { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, 4px); } }
+
+    .hint-text { font-size: 0.9rem; font-weight: 500; color: #d4d4d8; line-height: 1.5; margin: 0; font-family: 'Inter', monospace; }
+    .hint-cursor { display: inline-block; width: 2px; height: 1em; background: #A78BFA; margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
+
+    /* =======================================================
+       CONTENT-MODAL FÜR DIE NAV-BUTTONS
+       ======================================================= */
+    .content-modal {
+      position: fixed; inset: 0; z-index: 1001; display: flex; justify-content: center; align-items: center;
+      padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    }
+
+    .content-modal.active { opacity: 1; pointer-events: auto; }
+
+    .content-modal-backdrop {
+      position: absolute; inset: 0; background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+
+    .content-modal-card {
+      position: relative; background: linear-gradient(135deg, rgba(22, 22, 28, 0.97), rgba(12, 12, 16, 0.99));
+      border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 40px 100px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-radius: 24px; padding: 48px 44px; width: 100%; max-width: 720px; max-height: 85vh;
+      overflow-y: auto; color: #ffffff; transform: translateY(24px) scale(0.96);
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .content-modal.active .content-modal-card { transform: translateY(0) scale(1); }
+
+    .content-modal-card h2 { font-size: clamp(1.75rem, 3.2vw, 2.25rem); font-weight: 800; margin-bottom: 24px; letter-spacing: -0.02em; line-height: 1.2; }
+
+    .content-body { color: #a1a1aa; font-size: 1rem; line-height: 1.7; }
+    .content-body p + p { margin-top: 14px; }
+
+    .content-body .project-item {
+      padding: 20px; border: 1px solid rgba(255, 255, 255, 0.06); background: rgba(255, 255, 255, 0.02);
+      border-radius: 14px; margin-bottom: 14px; transition: all 0.3s ease;
+    }
+
+    .content-body .project-item:hover { border-color: rgba(167, 139, 250, 0.35); background: rgba(167, 139, 250, 0.04); transform: translateY(-2px); }
+    .content-body .project-item h3 { font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
+    .content-body .project-item p { font-size: 0.92rem; margin-bottom: 10px; }
+
+    .content-body .project-link {
+      display: inline-block; font-family: 'Inter', monospace; font-size: 0.82rem; font-weight: 600;
+      color: #A78BFA; text-decoration: none; border-bottom: 1px solid rgba(167, 139, 250, 0.4);
+      padding-bottom: 2px; transition: all 0.2s ease;
+    }
+
+    .content-body .project-link:hover { color: #ffffff; border-bottom-color: #ffffff; }
+
+    .content-body .contact-link {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 12px 22px;
+      background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.25);
+      border-radius: 100px; color: #ffffff; text-decoration: none; font-weight: 600;
+      font-size: 0.92rem; transition: all 0.3s ease;
+    }
+
+    .content-body .contact-link:hover { background: rgba(167, 139, 250, 0.15); transform: translateY(-2px); }
+
+    /* =======================================================
+       MEDIA QUERIES (NUR NOCH FÜR DEN ZOOM & TEXT)
+       ======================================================= */
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 40px 24px;
+        gap: 30px;
+      }
+      
+      .brand { align-items: center; }
+      .nav-buttons { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 100%; }
+
+      /* DER ZOOM-TRICK: Skaliert Bild UND Objekte zusammen */
+      .relative-image-container {
+        transform: scale(1.15);
+        transform-origin: top center;
+      }
+
+      .tall-image {
+        margin-top: 50vh; /* Platz für den Text oben */
+      }
+
+      .bottom-note {
+        left: 15vw;
+        text-align: center;
+        bottom: 23%;
+      }
+
+      .floating-hint {
+        top: auto;
+        bottom: 10%;
+        right: 5%;
+        left: 5%;
+        max-width: none;
+      }
+
+      /* Modal Layout wechselt auf untereinander */
+      .modal-content { padding: 36px 28px; max-height: 90vh; overflow-y: auto; }
+      .modal-layout { grid-template-columns: 1fr; gap: 20px; }
+      .modal-connector { display: none; }
+      .modal-image { max-width: 200px !important; }
+      .modal-text-side { text-align: center; transform: translateY(15px); }
+      .info-modal.active .modal-text-side { transform: translateY(0); }
+      .modal-text-side h3 { font-size: 1.5rem; }
+
+      .content-modal-card { padding: 32px 24px; }
+    }
+
+    @media (max-width: 425px) {
+      .top-bar { align-items: center; }
+      .typewriter-text { font-size: 0.8rem; }
+      .brand-bio { font-size: 0.83rem; }
+      
+      /* STÄRKERER ZOOM FÜR KLEINE HANDYS */
+      .relative-image-container {
+        transform: scale(1.35);
+        transform-origin: top center;
+      }
+
+      .tall-image { 
+        margin-top: 55vh; 
+      }
+      
+      .brand-bio { width: 100%; max-width: 320px; }
+      
+      .bottom-note { left: 2vw; bottom: 18%; }
+      .bottom-note h2 { font-size: clamp(1.5rem, 3vw, 1rem); }
+      .bottom-note p { font-size: clamp(0.8rem, 1.2vw, 1rem); }
+    }
+
+    @media (max-width: 1440px) {
+  .relative-image-container {
+    transform: none; 
+  }
+
+  /* Für noch kleinere Bildschirme (Handys) evtl. einen Tick mehr Höhe dazurechnen */
+  .overlay-pc {
+    top: calc(20.4% - 20px);
+  }
+
+  .overlay-plant {
+    top: calc(20% - 20px);
+  }
+
+  .overlay-cube {
+    top: calc(31.4% - 13px);
+  }
+}
+
+    @media (max-width: 1024px) {
+  .relative-image-container {
+    transform: none; 
+  }
+
+  /* Für noch kleinere Bildschirme (Handys) evtl. einen Tick mehr Höhe dazurechnen */
+  .overlay-pc {
+    top: calc(20.4% + 60px);
+  }
+
+  .overlay-plant {
+    top: calc(20% + 60px);
+  }
+
+  .overlay-cube {
+    top: calc(31.4% + 47px);
+  }
+}
+
+    @media (max-width: 768px) {
+  /* Skalierung entfernen, damit es nicht mehr unkontrolliert abhebt */
+  .relative-image-container {
+    transform: none; 
+  }
+
+  /* Nur die vertikale Position (top) mit calc() anpassen */
+  .overlay-pc {
+    top: calc(20.4% + 190px); /* Passe den Pixelwert (+15px) an, bis es exakt sitzt */
+  }
+
+  .overlay-plant {
+    top: calc(20% + 190px);
+  }
+
+  .overlay-cube {
+    top: calc(31.4% + 162px);
+  }
+}
+
+@media (max-width: 425px) {
+  .relative-image-container {
+    transform: none; 
+  }
+
+  /* Für noch kleinere Bildschirme (Handys) evtl. einen Tick mehr Höhe dazurechnen */
+  .overlay-pc {
+    top: calc(20.4% + 298px);
+  }
+
+  .overlay-plant {
+    top: calc(20% + 298px);
+  }
+
+  .overlay-cube {
+    top: calc(31.4% + 257px);
+  }
+}
+  </style>
+</head>
+<body>
+
+  <div class="hero-section">
+    
+    <div class="bg-anim-container" id="bg-anim"></div>
+
+    <div class="floating-hint" id="floatingHint">
+      <svg class="hint-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+      <p class="hint-text"><span id="hintText"></span><span class="hint-cursor"></span></p>
+    </div>
+
+    <header class="top-bar">
+      <div class="brand">
+        <h1 class="brand-name">Jayson Fischer</h1>
+        <div class="typewriter-container">
+          <p class="typewriter-text" id="typewriter"></p>
+          <span class="cursor"></span>
+        </div>
+        <p class="brand-bio">
+         Willkommen auf meiner Seite, <br>Ich bin 17 Jahre alt, stecke mitten in der Oberstufe und liebe es, Dinge zu bauen, die vorher nur auf einem leeren Blatt Papier existierten. <br>
+          Aktuell suche ich nach einem dualen Studienplatz in der Informatik und freue mich auf spannende Projekte, an denen ich wachsen kann. 
+        </p>
+      </div>
+
+      <nav class="nav-buttons">
+        <button class="modern-btn modern-btn--primary" onclick="openContentModal('projekte')">Projekte</button>
+        <button class="modern-btn" onclick="openContentModal('about')">Über Mich</button>
+        <button class="modern-btn" onclick="openContentModal('kontakt')">Kontakt</button>
+      </nav>
+    </header>
+
+    <div class="image-wrapper">
+      <div class="relative-image-container">
+        <img src="background.png" alt="Mein Pixel-Art Schreibtisch" class="tall-image">
+
+        <img src="screen.png" alt="PC" class="overlay-pc" onclick="openModal('pc')">
+        <img src="plant.png" alt="Pflanze" class="overlay-plant" onclick="openModal('plant')">
+        <img src="cube.png" alt="Zauberwürfel" class="overlay-cube" onclick="openModal('cube')">
+      </div>
+    </div>
+
+    <div class="bottom-note">
+      <h2>Nur wer Fehler macht,<br>lernt weiter.</h2>
+      <p>Hier liegen die zerknüllten Entwürfe. <br> Auf dem Bildschirm vor Ihnen läuft die 8. Version. </p>
+    </div>
+
+  </div>
+
+  <div class="info-modal" id="infoModal" onclick="closeModal(event)">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal(event)">&times;</button>
+      
+      <div class="modal-layout">
+        <div class="modal-image-side">
+          <div class="image-frame">
+            <img id="modalImage" src="" alt="" class="modal-image">
+          </div>
+          <span class="image-label" id="modalLabel"></span>
+        </div>
+        
+        <div class="modal-connector" aria-hidden="true">
+          <div class="connector-track"></div>
+          <div class="connector-pulse"></div>
+          <div class="connector-dot connector-dot--start"></div>
+          <div class="connector-dot connector-dot--end"></div>
+        </div>
+        
+        <div class="modal-text-side">
+          <span class="text-label">// info</span>
+          <h3 id="modalTitle"></h3>
+          <p id="modalText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-modal" id="contentModal">
+    <div class="content-modal-backdrop" onclick="closeContentModal()"></div>
+    <div class="content-modal-card">
+      <button class="modal-close" onclick="closeContentModal()">&times;</button>
+      <span class="text-label" id="contentLabel">// section</span>
+      <h2 id="contentTitle"></h2>
+      <div class="content-body" id="contentBody"></div>
+    </div>
+  </div>
+
+  <script>
+    /* --- 1. TYPEWRITER ANIMATION (Haupttext) --- */
+    const textElement = document.getElementById("typewriter");
+    const phrases = [
+      "> 12. Klasse. Abi, Code und schlaflose Nächte.",
+      "> Disziplin aus dem Gym. Logik vom Schachbrett.",
+      "> Vom leeren Blatt zum fertigen Web-Projekt.",
+      "> Lerne jeden Tag dazu.",
+      "> Suche duales Studium & spannende Projekte."
+    ];
+
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    function type() {
+      const currentPhrase = phrases[phraseIndex];
+      if (isDeleting) {
+        textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+        charIndex++;
+      }
+      let typeSpeed = isDeleting ? 40 : 100;
+      if (!isDeleting && charIndex === currentPhrase.length) {
+        typeSpeed = 2000; isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500;
+      }
+      setTimeout(type, typeSpeed);
+    }
+    document.addEventListener("DOMContentLoaded", () => { setTimeout(type, 1000); });
+
+    /* --- 2. SCHWEBENDER CODE --- */
+    const bgAnim = document.getElementById('bg-anim');
+    const symbols = ['<div>', '{ }', ';', 'const', 'function', '01', '</>', 'if', 'else'];
+    for (let i = 0; i < 25; i++) {
+      const el = document.createElement('div');
+      el.className = 'float-symbol';
+      el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+      el.style.animationDuration = (Math.random() * 20 + 35) + 's';
+      el.style.animationDelay = (Math.random() * -20) + 's'; 
+      bgAnim.appendChild(el);
+    }
+
+    /* --- 3. INFO-MODAL (Objekte) --- */
+    const modalData = {
+      pc: {
+        title: "Der Arbeitsplatz",
+        text: "Ausgerüstet mit VS Code, einem überforderten Browser mit 16 offenen Tabs und der festen Überzeugung, dass die nächste Idee nur 5 Minuten in Anspruch nimmt.",
+        image: "screen.png",
+        label: "Setup · 2026",
+        imageMaxWidth: "320px"
+      },
+      plant: {
+        title: "Meine Schreibtischpflanze",
+        text: "Erträgt mein Frust und sorgt dafür, dass zwischen all der Technik wenigstens etwas echtes Leben auf dem Schreibtisch steht.",
+        image: "plant.png",
+        label: "Green · Alive",
+        imageMaxWidth: "180px"
+      },
+      cube: {
+        title: "Der Zauberwürfel",
+        text: "15,56 Sekunden brauche ich im Bestfall, um aus völligem Chaos wieder Ordnung zu machen. Ich hasse ungelöste Probleme, weshalb ich ihn erst wieder weglege, wenn jede Seite stimmt.",
+        image: "cube.png",
+        label: "Logic · 3×3",
+        imageMaxWidth: "110px"
+      }
+    };
+
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+    const modalImage = document.getElementById('modalImage');
+    const modalLabel = document.getElementById('modalLabel');
+
+    function openModal(type) {
+      if (event) event.stopPropagation(); 
+      const data = modalData[type];
+      modalTitle.textContent = data.title;
+      modalText.textContent = data.text;
+      modalImage.src = data.image;
+      modalImage.alt = data.title;
+      modalLabel.textContent = data.label;
+      modalImage.style.maxWidth = data.imageMaxWidth || '280px';
+      modal.classList.add('active');
+    }
+
+    function closeModal(event) {
+      if (event.target === modal || event.target.classList.contains('modal-close')) {
+        modal.classList.remove('active');
+      }
+    }
+
+    /* --- 4. FLOATING HINTS MIT TYPEWRITER --- */
+    const floatingHint = document.getElementById('floatingHint');
+    const hintText = document.getElementById('hintText');
+
+    function typeHint(text, speed = 45) {
+      hintText.textContent = '';
+      let i = 0;
+      const tick = () => {
+        hintText.textContent = text.slice(0, ++i);
+        if (i < text.length) setTimeout(tick, speed);
+      };
+      tick();
+    }
+
+    function showHint(text, duration = 6000) {
+      floatingHint.classList.add('visible');
+      setTimeout(() => typeHint(text), 400);
+      setTimeout(() => {
+        floatingHint.classList.remove('visible');
+      }, duration);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => { showHint("Tipp: Klick die Objekte auf dem Tisch an", 7000); }, 3500);
+      setTimeout(() => { showHint("Bald: mehr Objekte & interaktive Elemente", 7000); }, 14000);
+      setTimeout(() => { showHint("Psst: Schau dir meine Projekte an", 7000); }, 24000);
+    });
+
+    /* --- 5. CONTENT-MODAL FÜR DIE NAV-BUTTONS --- */
+    const contentData = {
+      projekte: {
+        label: "// projekte",
+        title: "Meine Projekte",
+        html: `
+          <div class="project-item">
+            <h3>langgruen.de</h3>
+            <p>Dorfwebseite meines Heimatortes -> Live im Netz. 725 Jahrfeier :)</p>
+            <a href="https://langgruen.de" target="_blank" class="project-link">Live ansehen →</a>
+          </div>
+          <div class="project-item">
+            <h3>Finanz-Tracker</h3>
+            <p>Finanzen einfach im Überblick</p>
+            <a href="https://codebyjayson.github.io/FinanzenTracker/" class="project-link">Mehr erfahren →</a>
+          </div>
+          <div class="project-item">
+            <h3>Skat / Schafkopf-Tracker</h3>
+            <p>Für lange Abende mit den Freunden</p>
+            <a href="https://codebyjayson.github.io/Skat-Schafkopf/" class="project-link">Mehr erfahren →</a>
+          </div>
+          <div class="project-item">
+            <h3>Gym-Tracker</h3>
+            <p>Einfaches Tool um die Gewichte festzuhalten</p>
+            <a href="https://codebyjayson.github.io/Gym-Tracker/" class="project-link">Mehr erfahren →</a>
+          </div>
+          <div class="project-item">
+            <h3>Demo-Seite für einen Elektriker</h3>
+            <p>So könnte ihre nächste Webseite aussehen</p>
+            <a href="https://codebyjayson.github.io/demo-elektriker/" class="project-link">Mehr erfahren →</a>
+          </div>
+        `
+      },
+      about: {
+        label: "// über mich",
+        title: "Wer ich bin",
+        html: `
+          <p>Ich bin <strong style="color:#fff">Jayson</strong>, 17 Jahre alt und stecke gerade mitten in der Oberstufe. Seit zwei Jahren baue ich eigene Web-Projekte. Angefangen mit kleinen Tools für mich selbst, und heute Live-Anwendungen mit echten Nutzern.</p>
+          <p>Ich lerne am liebsten durch Bauen: Ein Problem erkennen, eine Lösung skizzieren, und dann so lange dran fummeln und frustrieren, bis es wirklich funktioniert.</p>
+          <p>Aktuell suche ich einen dualen Studienplatz in der Informatik, um Theorie und Praxis zu verbinden und um weiter an Dingen zu arbeiten, die anderen wirklich helfen.</p>
+        `
+      },
+      kontakt: {
+        label: "// kontakt",
+        title: "Lass uns reden",
+        html: `
+          <p>Du suchst einen motivierten Partner, der schon jetzt Code schreibt und mitdenkt? Ich freue mich über jede Nachricht.</p>
+          <p style="margin-top: 20px;">
+            <a href="fischer.jayson@icloud.com" class="contact-link">✉︎ fischer.jayson@icloud.com</a>
+          </p>
+          <p style="margin-top: 12px; font-size: 0.9rem; color: #868691;">...</p>
+        `
+      }
+    };
+
+    const contentModal = document.getElementById('contentModal');
+    const contentTitle = document.getElementById('contentTitle');
+    const contentBody = document.getElementById('contentBody');
+    const contentLabel = document.getElementById('contentLabel');
+
+    function openContentModal(type) {
+      const data = contentData[type];
+      contentLabel.textContent = data.label;
+      contentTitle.textContent = data.title;
+      contentBody.innerHTML = data.html;
+      contentModal.classList.add('active');
+    }
+
+    function closeContentModal() {
+      contentModal.classList.remove('active');
+    }
+
+    /* --- 6. ESC-HANDLER FÜR BEIDE MODALS --- */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (modal.classList.contains('active')) modal.classList.remove('active');
+        if (contentModal.classList.contains('active')) contentModal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
