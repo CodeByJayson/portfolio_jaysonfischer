@@ -22,7 +22,6 @@
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background-color: #000000; 
-      user-select: none; 
     }
 
     ::-webkit-scrollbar { display: none; }
@@ -32,7 +31,7 @@
       position: relative;
       width: 100%;
       background-color: #000000;
-      overflow: hidden; /* Verhindert horizontales Scrollen beim Zoomen */
+      overflow: hidden;
     }
 
     /* ================= TEXT & BUTTONS ================= */
@@ -134,16 +133,16 @@
     }
 
     .tall-image {
-      width: 130vw;
-      max-width: 1800px;
+      width: 100vw;
       height: auto;
       display: block;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      margin-top: 40vh; 
+      /* 🔴 WICHTIG: vw statt vh – skaliert mit der Bildbreite */
+      margin-top: 20vw; 
     }
 
-    /* ================= UNTERER TEXT (Papierschnipsel) ================= */
+    /* ================= UNTERER TEXT ================= */
     .bottom-note {
       position: absolute;
       bottom: 22%;
@@ -206,7 +205,7 @@
     }
 
     /* =======================================================
-       OBJEKTE (Positionen in % relativ zum Bild)
+       OBJEKTE – ALLE WERTE IN PROZENT (relativ zum Bild)
        ======================================================= */
     .relative-image-container {
       position: relative;
@@ -226,9 +225,8 @@
       filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.151));
     }
 
-    /* Diese Werte gelten jetzt für ALLE Bildschirmgrößen */
     .overlay-pc {
-      top: 20.4%;   
+      top: 19.7%;   
       left: 54.4%;  
       width: 16.5%; 
       height: auto;
@@ -236,7 +234,7 @@
     }
 
     .overlay-plant {
-      top: 20%;   
+      top: 19.3%;   
       left: 44.4%;  
       width: 9.2%; 
       height: auto;
@@ -245,7 +243,7 @@
     }
 
     .overlay-cube {
-      top: 31.4%;   
+      top: 30.6%;   
       left: 69.6%;  
       width: 5.3%; 
       height: auto;
@@ -253,7 +251,7 @@
     }
 
     /* =======================================================
-       MODAL (Für die Objekte)
+       MODAL
        ======================================================= */
     .info-modal {
       position: fixed;
@@ -271,10 +269,7 @@
       padding: 20px;
     }
 
-    .info-modal.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .info-modal.active { opacity: 1; pointer-events: auto; }
 
     .modal-content {
       background: linear-gradient(135deg, rgba(22, 22, 28, 0.96), rgba(12, 12, 16, 0.98));
@@ -290,9 +285,7 @@
       transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .info-modal.active .modal-content {
-      transform: translateY(0) scale(1);
-    }
+    .info-modal.active .modal-content { transform: translateY(0) scale(1); }
 
     .modal-layout {
       display: grid;
@@ -301,12 +294,7 @@
       align-items: center;
     }
 
-    .modal-image-side {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-    }
+    .modal-image-side { display: flex; flex-direction: column; align-items: center; gap: 18px; }
 
     .image-frame {
       position: relative;
@@ -440,7 +428,7 @@
     .hint-cursor { display: inline-block; width: 2px; height: 1em; background: #A78BFA; margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
 
     /* =======================================================
-       CONTENT-MODAL FÜR DIE NAV-BUTTONS
+       CONTENT-MODAL
        ======================================================= */
     .content-modal {
       position: fixed; inset: 0; z-index: 1001; display: flex; justify-content: center; align-items: center;
@@ -496,8 +484,23 @@
     .content-body .contact-link:hover { background: rgba(167, 139, 250, 0.15); transform: translateY(-2px); }
 
     /* =======================================================
-       MEDIA QUERIES (NUR NOCH FÜR DEN ZOOM & TEXT)
+       RESPONSIVE
        ======================================================= */
+
+    @media (max-width: 1440px) {
+      .tall-image { margin-top: 38vw; }
+      .overlay-pc { top: 30.2%; }
+      .overlay-plant { top: 29.9%; }
+      .overlay-cube { top: 39.8%; }
+    }
+
+    @media (max-width: 1024px) {
+      .tall-image { margin-top: 60vw; }
+      .overlay-pc { top: 39.7%; }
+      .overlay-plant { top: 39.4%; }
+      .overlay-cube { top: 48%; }
+    }
+
     @media (max-width: 768px) {
       .top-bar {
         flex-direction: column;
@@ -510,15 +513,17 @@
       .brand { align-items: center; }
       .nav-buttons { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 100%; }
 
-      /* DER ZOOM-TRICK: Skaliert Bild UND Objekte zusammen */
+      /* Mobile-Zoom über transform: skaliert Bild und Overlays gemeinsam */
       .relative-image-container {
-        transform: scale(1.15);
         transform-origin: top center;
       }
 
       .tall-image {
-        margin-top: 50vh; /* Platz für den Text oben */
+        margin-top: 88vw;
       }
+      .overlay-pc { top: 48.7%; }
+      .overlay-plant { top: 48.4%; }
+      .overlay-cube { top: 55.7%; }
 
       .bottom-note {
         left: 15vw;
@@ -534,7 +539,6 @@
         max-width: none;
       }
 
-      /* Modal Layout wechselt auf untereinander */
       .modal-content { padding: 36px 28px; max-height: 90vh; overflow-y: auto; }
       .modal-layout { grid-template-columns: 1fr; gap: 20px; }
       .modal-connector { display: none; }
@@ -546,104 +550,41 @@
       .content-modal-card { padding: 32px 24px; }
     }
 
-    @media (max-width: 425px) {
-      .top-bar { align-items: center; }
-      .typewriter-text { font-size: 0.8rem; }
-      .brand-bio { font-size: 0.83rem; }
-      
-      /* STÄRKERER ZOOM FÜR KLEINE HANDYS */
-      .relative-image-container {
-        transform: scale(1.35);
-        transform-origin: top center;
-      }
-
-      .tall-image { 
-        margin-top: 55vh; 
-      }
-      
-      .brand-bio { width: 100%; max-width: 320px; }
-      
-      .bottom-note { left: 2vw; bottom: 18%; }
+    @media (max-width: 500px) {
+      .relative-image-container { left: 10vw; }
+      .tall-image { margin-top: 135vw; width: 140vw; }
+      .overlay-pc { top: 50.9%; }
+      .overlay-plant { top: 50.7%; }
+      .overlay-cube { top: 57.6%; }
+      .bottom-note { left: 1vw; bottom: 18%; }
       .bottom-note h2 { font-size: clamp(1.5rem, 3vw, 1rem); }
       .bottom-note p { font-size: clamp(0.8rem, 1.2vw, 1rem); }
     }
 
-    @media (max-width: 1440px) {
-  .relative-image-container {
-    transform: none; 
-  }
+    @media (max-width: 425px) {
+      .typewriter-text { font-size: 0.8rem; }
+      .brand-bio { font-size: 0.83rem; max-width: 320px; }
 
-  /* Für noch kleinere Bildschirme (Handys) evtl. einen Tick mehr Höhe dazurechnen */
-  .overlay-pc {
-    top: calc(20.4% - 20px);
-  }
+      /* Stärkerer Zoom für kleine Handys */
+      .relative-image-container {
+        left: 10vw;
+        align-items: center;
+        transform-origin: top center;
+      }
 
-  .overlay-plant {
-    top: calc(20% - 20px);
-  }
+      .tall-image {
+        margin-top: 150vw;
+        width: 150vw;
+      }
+      .overlay-pc { top: 51.8%; }
+      .overlay-plant { top: 51.7%; }
+      .overlay-cube { top: 58.4%; }
 
-  .overlay-cube {
-    top: calc(31.4% - 13px);
-  }
-}
+      .bottom-note { left: 2vw; bottom: 18%; }
+      .bottom-note h2 { font-size: clamp(1.5rem, 3vw, 1rem); }
+      .bottom-note p { font-size: clamp(0.8rem, 1.2vw, 1rem); }
 
-    @media (max-width: 1024px) {
-  .relative-image-container {
-    transform: none; 
-  }
-
-  /* Für noch kleinere Bildschirme (Handys) evtl. einen Tick mehr Höhe dazurechnen */
-  .overlay-pc {
-    top: calc(20.4% + 60px);
-  }
-
-  .overlay-plant {
-    top: calc(20% + 60px);
-  }
-
-  .overlay-cube {
-    top: calc(31.4% + 47px);
-  }
-}
-
-    @media (max-width: 768px) {
-  /* Skalierung entfernen, damit es nicht mehr unkontrolliert abhebt */
-  .relative-image-container {
-    transform: none; 
-  }
-
-  /* Nur die vertikale Position (top) mit calc() anpassen */
-  .overlay-pc {
-    top: calc(20.4% + 190px); /* Passe den Pixelwert (+15px) an, bis es exakt sitzt */
-  }
-
-  .overlay-plant {
-    top: calc(20% + 190px);
-  }
-
-  .overlay-cube {
-    top: calc(31.4% + 162px);
-  }
-}
-
-@media (max-width: 425px) {
-  .relative-image-container {
-    transform: none; 
-  }
-
-  /* Für noch kleinere Bildschirme (Handys) evtl. einen Tick mehr Höhe dazurechnen */
-  .overlay-pc {
-    top: calc(20.4% + 298px);
-  }
-
-  .overlay-plant {
-    top: calc(20% + 298px);
-  }
-
-  .overlay-cube {
-    top: calc(31.4% + 257px);
-  }
-}
+    }
   </style>
 </head>
 <body>
@@ -736,7 +677,7 @@
   </div>
 
   <script>
-    /* --- 1. TYPEWRITER ANIMATION (Haupttext) --- */
+    /* --- 1. TYPEWRITER ANIMATION --- */
     const textElement = document.getElementById("typewriter");
     const phrases = [
       "> 12. Klasse. Abi, Code und schlaflose Nächte.",
@@ -783,7 +724,7 @@
       bgAnim.appendChild(el);
     }
 
-    /* --- 3. INFO-MODAL (Objekte) --- */
+    /* --- 3. INFO-MODAL --- */
     const modalData = {
       pc: {
         title: "Der Arbeitsplatz",
@@ -832,7 +773,7 @@
       }
     }
 
-    /* --- 4. FLOATING HINTS MIT TYPEWRITER --- */
+    /* --- 4. FLOATING HINTS --- */
     const floatingHint = document.getElementById('floatingHint');
     const hintText = document.getElementById('hintText');
 
@@ -860,7 +801,7 @@
       setTimeout(() => { showHint("Psst: Schau dir meine Projekte an", 7000); }, 24000);
     });
 
-    /* --- 5. CONTENT-MODAL FÜR DIE NAV-BUTTONS --- */
+    /* --- 5. CONTENT-MODAL --- */
     const contentData = {
       projekte: {
         label: "// projekte",
@@ -908,7 +849,7 @@
         html: `
           <p>Du suchst einen motivierten Partner, der schon jetzt Code schreibt und mitdenkt? Ich freue mich über jede Nachricht.</p>
           <p style="margin-top: 20px;">
-            <a href="fischer.jayson@icloud.com" class="contact-link">✉︎ fischer.jayson@icloud.com</a>
+            <a href="mailto:fischer.jayson@icloud.com" class="contact-link">✉︎ fischer.jayson@icloud.com</a>
           </p>
           <p style="margin-top: 12px; font-size: 0.9rem; color: #868691;">...</p>
         `
@@ -932,7 +873,7 @@
       contentModal.classList.remove('active');
     }
 
-    /* --- 6. ESC-HANDLER FÜR BEIDE MODALS --- */
+    /* --- 6. ESC-HANDLER --- */
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         if (modal.classList.contains('active')) modal.classList.remove('active');
